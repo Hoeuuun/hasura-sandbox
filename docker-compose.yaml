@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  # Postgres DB for data storage
+  postgres:
+    image: 'postgres:11.1'
+    volumes:
+      - ./docker_pg_data:/var/lib/postgresql
+    ports:
+      - '5432:5432'
+  hasura:
+    image: 'hasura/graphql-engine:latest'
+    ports:
+      - '8080:8080'
+    environment:
+      - HASURA_GRAPHQL_DATABASE_URL=postgres://postgres:@host.docker.internal:5432/postgres
+      - HASURA_GRAPHQL_ENABLE_CONSOLE=true
+  dependencies:
+    image: 'jwilder/dockerize:0.6.1'
+    command: >
+      echo "Go Wild!"
+    depends_on:
+      - postgres
+      - hasura
